@@ -1,10 +1,168 @@
 openapi: 3.0.3
 info:
-  title: OpenAPI schema for template walrus-template-template
+  title: OpenAPI schema for template terraform-azure-postgresql
 components:
   schemas:
     variables:
       type: object
+      required:
+      - infrastructure
+      properties:
+        infrastructure:
+          title: Infrastructure
+          type: object
+          description: |
+            Specify the infrastructure information for deploying.
+          default: {}
+          required:
+          - resource_group
+          - subnet
+          - virtual_network
+          - domain_suffix
+          properties:
+            domain_suffix:
+              title: Domain Suffix
+              type: string
+              x-walrus-ui:
+                order: 1
+            resource_group:
+              title: Resource Group
+              type: string
+              x-walrus-ui:
+                order: 1
+            subnet:
+              title: Subnet
+              type: string
+              x-walrus-ui:
+                order: 3
+            virtual_network:
+              title: Virtual Network
+              type: string
+              x-walrus-ui:
+                order: 2
+          x-walrus-ui:
+            colSpan: 12
+            group: Advanced
+            order: 2
+        architecture:
+          title: Architecture
+          type: string
+          description: |
+            Specify the deployment architecture, select from standalone or replication.
+          default: standalone
+          enum:
+          - standalone
+          - replication
+          x-walrus-ui:
+            group: Basic
+            order: 3
+        replication_readonly_replicas:
+          title: Replication Readonly Replicas
+          type: number
+          description: |
+            Specify the number of read-only replicas under the replication deployment.
+          default: 1
+          enum:
+          - 1
+          - 3
+          - 5
+          x-walrus-ui:
+            group: Basic
+            order: 4
+            showIf: architecture=replication
+        engine_version:
+          title: Engine Version
+          type: string
+          description: |
+            Specify the deployment engine version of the PostgreSQL Flexible Server to use. Possible values are 5.7, and 8.0.21.
+          default: 16
+          x-walrus-ui:
+            group: Basic
+            order: 4
+        database:
+          title: Database
+          type: string
+          description: "Specify the database name. The database name must be 2-64
+            characters long and start with any lower letter, combined with number,
+            or symbols: - _. \nThe database name cannot be PostgreSQL forbidden keyword.\n"
+          default: mydb
+          x-walrus-ui:
+            group: Basic
+            order: 5
+        username:
+          title: Username
+          type: string
+          description: |
+            Specify the account username. The username must be 1-63 characters long and start with lower letter, combined with number.
+            The username cannot be PostgreSQL forbidden keyword and azure_superuser, admin, administrator, root, guest or public.
+          default: rdsuser
+          x-walrus-ui:
+            group: Basic
+            order: 6
+        password:
+          title: Password
+          type: string
+          description: |
+            Specify the account password. The password must be 8-128 characters long and start with any letter, number, or symbols: ! # $ % ^ & * ( ) _ + - =.
+            If not specified, it will generate a random password.
+          format: password
+          writeOnly: true
+          minLength: 8
+          maxLength: 32
+          x-walrus-ui:
+            group: Basic
+            order: 7
+        resources:
+          title: Resources
+          type: object
+          description: |
+            Specify the computing resources.
+            The computing resource design of Azure Cloud is very complex, it also needs to consider on the storage resource, please view the specification document for more information.
+            For example: B_Standard_B1s, GP_Standard_D2ads_v5 or BC_Standard_E2ds_v4
+            See https://docs.microsoft.com/en-us/azure/postgresql/concepts-pricing-tiers for more information.
+            Examples:
+            ```
+            resources:
+              class: string, optional            # sku
+            ```
+          default:
+            class: B_Standard_B1s
+          properties:
+            class:
+              default: B_Standard_B1s
+              title: Class
+              type: string
+              x-walrus-ui:
+                order: 1
+          x-walrus-ui:
+            colSpan: 12
+            group: Basic
+            order: 8
+        storage:
+          title: Storage
+          type: object
+          description: |
+            Choosing the storage resource is also related to the computing resource, please view the specification document for more information.
+
+            Examples:
+            ```
+            storage:
+              size: number, optional         # in megabyte
+            ```
+          default:
+            size: 20480
+          properties:
+            size:
+              default: 20480
+              title: Size
+              type: number
+              x-walrus-ui:
+                order: 1
+          x-walrus-ui:
+            colSpan: 12
+            group: Basic
+            order: 9
       x-walrus-ui:
         groupOrder:
         - Basic
+        - Advanced
