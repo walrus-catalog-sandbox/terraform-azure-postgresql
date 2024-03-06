@@ -35,18 +35,19 @@ Specify the infrastructure information for deploying.
 Examples:
 ```
 infrastructure:
-  resource_group: string             # the resource group name where to deploy the PostgreSQL Flexible Server
-  virtual_network: string            # the virtual network name where to deploy the PostgreSQL Flexible Server
-  subnet: string                     # the subnet name under the virtual network where to deploy the PostgreSQL Flexible Server
-  domain_suffix: string              # a private DNS namespace of the PrivateZone where to register the applied PostgreSQL service. It must end with 'postgres.database.azure.com'
+  resource_group: string, optional             # the resource group name where to deploy the PostgreSQL Flexible Server
+  virtual_network: string, optional            # the virtual network name where to deploy the PostgreSQL Flexible Server
+  subnet: string, optional                     # the subnet name under the virtual network where to deploy the PostgreSQL Flexible Server
+  domain_suffix: string, optional              # a private DNS namespace of the PrivateZone where to register the applied PostgreSQL service. It must end with 'postgres.database.azure.com'
 ```
 EOF
   type = object({
-    resource_group  = string
-    virtual_network = string
-    subnet          = string
-    domain_suffix   = string
+    resource_group  = optional(string)
+    virtual_network = optional(string)
+    subnet          = optional(string)
+    domain_suffix   = optional(string)
   })
+  default = {}
 }
 
 #

@@ -17,65 +17,10 @@ provider "azurerm" {
   features {}
 }
 
-# create resource group.
-
-resource "azurerm_resource_group" "example" {
-  name     = "myResourceGroup"
-  location = "eastus"
-}
-
-# create virtual network.
-
-resource "azurerm_virtual_network" "example" {
-  name                = "myVnet"
-  resource_group_name = azurerm_resource_group.example.name
-  location            = azurerm_resource_group.example.location
-  address_space       = ["10.0.0.0/16"]
-}
-
-# create subnet.
-
-resource "azurerm_subnet" "example" {
-  name                 = "mySubnet"
-  resource_group_name  = azurerm_resource_group.example.name
-  virtual_network_name = azurerm_virtual_network.example.name
-  address_prefixes     = ["10.0.1.0/24"]
-
-  delegation {
-    name = "delegation"
-
-    service_delegation {
-      name    = "Microsoft.DBforPostgreSQL/flexibleServers"
-      actions = ["Microsoft.Network/virtualNetworks/subnets/action"]
-    }
-  }
-}
-
-# create private dns.
-
-resource "azurerm_private_dns_zone" "example" {
-  name                = "example.postgres.database.azure.com"
-  resource_group_name = azurerm_resource_group.example.name
-}
-
-resource "azurerm_private_dns_zone_virtual_network_link" "example" {
-  name                  = "example_virtual_network_link"
-  private_dns_zone_name = azurerm_private_dns_zone.example.name
-  virtual_network_id    = azurerm_virtual_network.example.id
-  resource_group_name   = azurerm_resource_group.example.name
-}
-
 # create postgresql service.
 
 module "this" {
   source = "../.."
-
-  infrastructure = {
-    resource_group  = azurerm_resource_group.example.name
-    virtual_network = azurerm_virtual_network.example.name
-    subnet          = azurerm_subnet.example.name
-    domain_suffix   = azurerm_private_dns_zone.example.name
-  }
 
   architecture = "replication"
   database     = "mydb"
@@ -83,8 +28,6 @@ module "this" {
   resources = {
     class = "GP_Standard_D4s_v3"
   }
-
-  depends_on = [azurerm_private_dns_zone_virtual_network_link.example]
 }
 
 output "context" {
