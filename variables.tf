@@ -155,7 +155,7 @@ EOF
 
 variable "storage" {
   description = <<-EOF
-Choosing the storage resource is also related to the computing resource, please view the specification document for more information.
+Specify the storage resources.
 
 Examples:
 ```

@@ -75,11 +75,18 @@ components:
           title: Engine Version
           type: string
           description: |
-            Specify the deployment engine version of the PostgreSQL Flexible Server to use. Possible values are 5.7, and 8.0.21.
-          default: 16
+            Specify the deployment engine version of the PostgreSQL Flexible Server to use. Possible values are 11.0, 12.0, 13.0, 14.0, 15.0, and 16.0.
+          default: "16.0"
+          enum:
+          - "11.0"
+          - "12.0"
+          - "13.0"
+          - "14.0"
+          - "15.0"
+          - "16.0"
           x-walrus-ui:
             group: Basic
-            order: 4
+            order: 5
         database:
           title: Database
           type: string
@@ -119,18 +126,19 @@ components:
           description: |
             Specify the computing resources.
             The computing resource design of Azure Cloud is very complex, it also needs to consider on the storage resource, please view the specification document for more information.
-            For example: B_Standard_B1s, GP_Standard_D2ads_v5 or BC_Standard_E2ds_v4
+            For example: B_Standard_B1ms, GP_Standard_D2s_v3, MO_Standard_E4s_v3
             See https://docs.microsoft.com/en-us/azure/postgresql/concepts-pricing-tiers for more information.
-            Examples:
-            ```
-            resources:
-              class: string, optional            # sku
-            ```
           default:
-            class: B_Standard_B1s
+            class: B_Standard_B1ms
           properties:
             class:
-              default: B_Standard_B1s
+              default: B_Standard_B1ms
+              description: |
+                Specify the pricing tier for the PostgreSQL Flexible Server. Valid values are B_Standard_B1ms, GP_Standard_D2s_v3, MO_Standard_E4s_v3.
+              enum:
+              - B_Standard_B1ms
+              - GP_Standard_D2s_v3
+              - MO_Standard_E4s_v3
               title: Class
               type: string
               x-walrus-ui:
@@ -138,23 +146,19 @@ components:
           x-walrus-ui:
             colSpan: 12
             group: Basic
-            order: 8
+            order: 9
         storage:
           title: Storage
           type: object
           description: |
-            Choosing the storage resource is also related to the computing resource, please view the specification document for more information.
-
-            Examples:
-            ```
-            storage:
-              size: number, optional         # in megabyte
-            ```
+            Specify the storage resources.
           default:
-            size: 20480
+            size: 32768
           properties:
             size:
-              default: 20480
+              default: 32768
+              description: |
+                Specify the storage size of the PostgreSQL Flexible Server. The storage size is in megabytes.
               title: Size
               type: number
               x-walrus-ui:
@@ -162,7 +166,7 @@ components:
           x-walrus-ui:
             colSpan: 12
             group: Basic
-            order: 9
+            order: 10
       x-walrus-ui:
         groupOrder:
         - Basic
