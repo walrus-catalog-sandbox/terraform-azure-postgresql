@@ -67,17 +67,19 @@ resource "azurerm_subnet" "default" {
 resource "azurerm_private_dns_zone" "default" {
   count = var.infrastructure.domain_suffix == null || var.infrastructure.resource_group == null ? 1 : 0
 
-  name                = "example.postgres.database.azure.com"
+  name                = "default.postgres.database.azure.com"
   resource_group_name = data.azurerm_resource_group.selected.name
 }
 
-resource "azurerm_private_dns_zone_virtual_network_link" "example" {
+resource "azurerm_private_dns_zone_virtual_network_link" "default" {
   count = var.infrastructure.domain_suffix == null || var.infrastructure.resource_group == null ? 1 : 0
 
-  name                  = "example_virtual_network_link"
+  name                  = "default_virtual_network_link"
   private_dns_zone_name = data.azurerm_private_dns_zone.selected.name
   virtual_network_id    = data.azurerm_virtual_network.selected.id
   resource_group_name   = data.azurerm_resource_group.selected.name
+
+  depends_on = [data.azurerm_subnet.selected]
 }
 
 #
