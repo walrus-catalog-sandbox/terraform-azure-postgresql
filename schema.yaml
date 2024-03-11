@@ -126,7 +126,7 @@ components:
           description: |
             Specify the computing resources.
             The computing resource design of Azure Cloud is very complex, it also needs to consider on the storage resource, please view the specification document for more information.
-            For example: B_Standard_B1ms, GP_Standard_D2s_v3, MO_Standard_E4s_v3
+            For example: B_Standard_B1ms, GP_Standard_D2s_v3, MO_Standard_E4s_v3.
             See https://docs.microsoft.com/en-us/azure/postgresql/concepts-pricing-tiers for more information.
           default:
             class: B_Standard_B1ms
@@ -134,11 +134,7 @@ components:
             class:
               default: B_Standard_B1ms
               description: |
-                Specify the pricing tier for the PostgreSQL Flexible Server. Valid values are B_Standard_B1ms, GP_Standard_D2s_v3, MO_Standard_E4s_v3.
-              enum:
-              - B_Standard_B1ms
-              - GP_Standard_D2s_v3
-              - MO_Standard_E4s_v3
+                Specify the pricing tier for the PostgreSQL Flexible Server. For example: B_Standard_B1ms, GP_Standard_D2s_v3, MO_Standard_E4s_v3. See https://docs.microsoft.com/en-us/azure/postgresql/concepts-pricing-tiers for more information.
               title: Class
               type: string
               x-walrus-ui:

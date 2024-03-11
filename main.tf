@@ -6,8 +6,9 @@ locals {
   resource_name    = coalesce(try(var.context["resource"]["name"], null), "example")
   resource_id      = coalesce(try(var.context["resource"]["id"], null), "example_id")
 
+  namespace = join("-", [local.project_name, local.environment_name])
   tags = {
-    "Name" = local.resource_name
+    "Name" = join("-", [local.namespace, local.resource_name])
 
     "walrus.seal.io-catalog-name"     = "terraform-azure-postgresql"
     "walrus.seal.io-project-id"       = local.project_id
@@ -162,6 +163,7 @@ resource "random_string" "name_suffix" {
 
 locals {
   name     = join("-", [local.resource_name, random_string.name_suffix.result])
+  fullname = join("-", [local.namespace, local.name])
   version  = coalesce(try(split(".", var.engine_version)[0], null), "16")
   database = coalesce(var.database, "mydb")
   username = coalesce(var.username, "rdsuser")
@@ -173,7 +175,7 @@ locals {
 }
 
 resource "azurerm_postgresql_flexible_server" "primary" {
-  name = local.name
+  name = local.fullname
   tags = local.tags
 
   resource_group_name = data.azurerm_resource_group.selected.name
@@ -203,7 +205,7 @@ resource "azurerm_postgresql_flexible_server" "primary" {
 resource "azurerm_postgresql_flexible_server" "secondary" {
   count = local.architecture == "replication" ? local.replication_readonly_replicas : 0
 
-  name = join("-", [local.name, "secondary", tostring(count.index)])
+  name = join("-", [local.fullname, "secondary", tostring(count.index)])
   tags = local.tags
 
   resource_group_name = data.azurerm_resource_group.selected.name
